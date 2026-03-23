@@ -66,7 +66,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex flex-col relative z-10 w-full md:items-center lg:items-start transition-all">
             <p className="hidden lg:block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-[0.2em]">Super Admin</p>
             <div className="flex items-center gap-2.5 justify-start md:justify-center lg:justify-start w-full">
-              <Image src="/logo.png" alt="FoodWonderland Logo" width={32} height={32} className="w-7 h-7 lg:w-8 lg:h-8 flex-shrink-0 drop-shadow-sm brightness-110" priority />
+              <Image src="/logo.webp" alt="FoodWonderland Logo" width={32} height={32} className="w-7 h-7 lg:w-8 lg:h-8 flex-shrink-0 drop-shadow-sm brightness-110" priority />
               <h1 className="block md:hidden lg:block text-xl font-extrabold text-white tracking-tight truncate">
                 Admin Panel
               </h1>

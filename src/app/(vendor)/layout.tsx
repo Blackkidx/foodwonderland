@@ -67,7 +67,7 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
           <div className="flex flex-col relative z-10 w-full md:items-center lg:items-start transition-all">
             <p className="hidden lg:block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 opacity-80">ระบบหลังร้าน</p>
             <div className="flex items-center gap-2.5 justify-start md:justify-center lg:justify-start w-full">
-              <Image src="/logo.png" alt="FoodWonderland Logo" width={36} height={36} className="w-8 h-8 lg:w-9 lg:h-9 flex-shrink-0 drop-shadow-sm" priority />
+              <Image src="/logo.webp" alt="FoodWonderland Logo" width={36} height={36} className="w-8 h-8 lg:w-9 lg:h-9 flex-shrink-0 drop-shadow-sm" priority />
               <h1 className="block md:hidden lg:block text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300 truncate">
                 FoodWonderland
               </h1>

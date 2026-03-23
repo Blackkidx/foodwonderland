@@ -11,8 +11,11 @@ const kanit = Kanit({
 })
 
 export const metadata: Metadata = {
-  title: 'FoodWonderland v2',
-  description: 'A modern food court ordering system',
+  title: 'FoodWonderland',
+  description: 'ระบบสั่งอาหารออนไลน์ผ่าน QR Code สำหรับศูนย์อาหาร',
+  icons: {
+    icon: '/logo.webp',
+  }
 }
 
 export default function RootLayout({
