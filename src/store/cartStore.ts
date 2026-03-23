@@ -4,18 +4,18 @@ import { CartItem, CartByRestaurant } from '@/types'
 
 interface CartStore {
   cart: CartByRestaurant[]
-  sessionId: string | null
-  customerName: string | null
+  tableId: string | null
   tableNumber: number | null
+  sessionToken: string | null
 
   // Session
-  setSession: (sessionId: string, customerName: string, tableNumber: number) => void
+  setTable: (tableId: string, tableNumber: number) => void
   clearSession: () => void
 
   // Cart
   addItem: (restaurantId: number, restaurantName: string, item: CartItem) => void
-  removeItem: (restaurantId: number, menuId: number) => void
-  updateQuantity: (restaurantId: number, menuId: number, quantity: number) => void
+  removeItem: (restaurantId: number, itemId: string) => void
+  updateQuantity: (restaurantId: number, itemId: string, quantity: number) => void
   clearRestaurant: (restaurantId: number) => void
   clearCart: () => void
 
@@ -28,21 +28,29 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       cart: [],
-      sessionId: null,
-      customerName: null,
+      tableId: null,
       tableNumber: null,
+      sessionToken: null,
 
-      setSession: (sessionId, customerName, tableNumber) =>
-        set({ sessionId, customerName, tableNumber }),
+      setTable: (tableId, tableNumber) => {
+        const state = get()
+        // ถ้าเป็นโต๊ะเดิมและมี session อยู่แล้ว ให้ใช้ session เดิมและตะกร้าเดิม
+        if (state.tableId === tableId && state.sessionToken) {
+          return
+        }
+        // สแกนโต๊ะใหม่ สร้าง session token ใหม่และล้างตะกร้า
+        const newToken = crypto.randomUUID()
+        set({ tableId, tableNumber, sessionToken: newToken, cart: [] })
+      },
 
       clearSession: () =>
-        set({ sessionId: null, customerName: null, tableNumber: null, cart: [] }),
+        set({ tableId: null, tableNumber: null, cart: [], sessionToken: null }),
 
       addItem: (restaurantId, restaurantName, item) =>
         set((state) => {
           const existing = state.cart.find((r) => r.restaurantId === restaurantId)
           if (existing) {
-            const existingItem = existing.items.find((i) => i.menuId === item.menuId)
+            const existingItem = existing.items.find((i) => i.id === item.id)
             return {
               cart: state.cart.map((r) =>
                 r.restaurantId === restaurantId
@@ -50,7 +58,7 @@ export const useCartStore = create<CartStore>()(
                       ...r,
                       items: existingItem
                         ? r.items.map((i) =>
-                            i.menuId === item.menuId
+                            i.id === item.id
                               ? { ...i, quantity: i.quantity + item.quantity }
                               : i
                           )
@@ -65,25 +73,25 @@ export const useCartStore = create<CartStore>()(
           }
         }),
 
-      removeItem: (restaurantId, menuId) =>
+      removeItem: (restaurantId, itemId) =>
         set((state) => ({
           cart: state.cart
             .map((r) =>
               r.restaurantId === restaurantId
-                ? { ...r, items: r.items.filter((i) => i.menuId !== menuId) }
+                ? { ...r, items: r.items.filter((i) => i.id !== itemId) }
                 : r
             )
             .filter((r) => r.items.length > 0),
         })),
 
-      updateQuantity: (restaurantId, menuId, quantity) =>
+      updateQuantity: (restaurantId, itemId, quantity) =>
         set((state) => ({
           cart: state.cart.map((r) =>
             r.restaurantId === restaurantId
               ? {
                   ...r,
                   items: r.items.map((i) =>
-                    i.menuId === menuId ? { ...i, quantity } : i
+                    i.id === itemId ? { ...i, quantity } : i
                   ),
                 }
               : r

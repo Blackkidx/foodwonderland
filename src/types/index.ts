@@ -6,6 +6,8 @@ export interface Restaurant {
   logo_url: string | null
   qr_payment_url: string | null
   is_active: boolean
+  avg_rating?: number
+  review_count?: number
   created_at: string
 }
 
@@ -19,6 +21,8 @@ export interface Menu {
   stock: number
   low_stock_threshold: number
   is_available: boolean
+  has_special_option: boolean
+  special_option_price: number
   created_at: string
 }
 
@@ -42,6 +46,8 @@ export interface OrderItem {
   menu_name: string
   quantity: number
   price: number
+  options?: string | null
+  note?: string | null
 }
 
 export interface Payment {
@@ -82,11 +88,14 @@ export interface Profile {
 
 // Cart Types (client-side only)
 export interface CartItem {
+  id: string
   menuId: number
   menuName: string
   price: number
   quantity: number
   imageUrl: string | null
+  optionsText?: string
+  noteText?: string
 }
 
 export interface CartByRestaurant {

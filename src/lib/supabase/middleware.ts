@@ -25,14 +25,29 @@ export async function updateSession(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Protect vendor routes
-  if (request.nextUrl.pathname.startsWith('/vendor') && !user) {
-    return NextResponse.redirect(new URL('/login', request.url))
-  }
+  if (!user) {
+    if (request.nextUrl.pathname.startsWith('/admin') || request.nextUrl.pathname.startsWith('/vendor')) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+  } else {
+    // Fetch profile to get role for RBAC
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
 
-  // Protect admin routes
-  if (request.nextUrl.pathname.startsWith('/admin') && !user) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    const role = profile?.role
+
+    // Protect admin routes
+    if (request.nextUrl.pathname.startsWith('/admin') && role !== 'super_admin') {
+      return NextResponse.redirect(new URL('/', request.url)) // redirect unauthorized to home
+    }
+
+    // Protect vendor routes
+    if (request.nextUrl.pathname.startsWith('/vendor') && role !== 'vendor' && role !== 'super_admin') {
+      return NextResponse.redirect(new URL('/', request.url)) // redirect unauthorized to home
+    }
   }
 
   return supabaseResponse
